@@ -6,11 +6,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
-	"github.com/sqlc-dev/plugin-sdk-go/sdk"
-	"github.com/sqlc-dev/sqlc-gen-go/internal/inflection"
 	"github.com/sqlc-dev/plugin-sdk-go/metadata"
 	"github.com/sqlc-dev/plugin-sdk-go/plugin"
+	"github.com/sqlc-dev/plugin-sdk-go/sdk"
+	"github.com/sqlc-dev/sqlc-gen-go/internal/inflection"
+	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
 )
 
 func buildEnums(req *plugin.GenerateRequest, options *opts.Options) []Enum {
@@ -44,11 +44,13 @@ func buildEnums(req *plugin.GenerateRequest, options *opts.Options) []Enum {
 				if _, found := seen[value]; found || value == "" {
 					value = fmt.Sprintf("value_%d", i)
 				}
-				e.Constants = append(e.Constants, Constant{
-					Name:  StructName(enumName+"_"+value, options),
-					Value: v,
-					Type:  e.Name,
-				})
+				e.Constants = append(
+					e.Constants, Constant{
+						Name:  StructName(enumName+"_"+value, options),
+						Value: v,
+						Type:  e.Name,
+					},
+				)
 				seen[value] = struct{}{}
 			}
 			enums = append(enums, e)
@@ -75,10 +77,12 @@ func buildStructs(req *plugin.GenerateRequest, options *opts.Options) []Struct {
 			}
 			structName := tableName
 			if !options.EmitExactTableNames {
-				structName = inflection.Singular(inflection.SingularParams{
-					Name:       structName,
-					Exclusions: options.InflectionExcludeTableNames,
-				})
+				structName = inflection.Singular(
+					inflection.SingularParams{
+						Name:       structName,
+						Exclusions: options.InflectionExcludeTableNames,
+					},
+				)
 			}
 			s := Struct{
 				Table:   &plugin.Identifier{Schema: schema.Name, Name: table.Rel.Name},
@@ -94,12 +98,15 @@ func buildStructs(req *plugin.GenerateRequest, options *opts.Options) []Struct {
 					tags["json"] = JSONTagName(column.Name, options)
 				}
 				addExtraGoStructTags(tags, req, options, column)
-				s.Fields = append(s.Fields, Field{
-					Name:    StructName(column.Name, options),
-					Type:    goType(req, options, column),
-					Tags:    tags,
-					Comment: column.Comment,
-				})
+				s.Fields = append(
+					s.Fields, Field{
+						Name:    StructName(column.Name, options),
+						Type:    goType(req, options, column),
+						Tags:    tags,
+						Comment: column.Comment,
+						GqlType: gqlType(req, options, column),
+					},
+				)
 			}
 			structs = append(structs, s)
 		}
@@ -242,10 +249,12 @@ func buildQueries(req *plugin.GenerateRequest, options *opts.Options, structs []
 		} else if len(query.Params) >= 1 {
 			var cols []goColumn
 			for _, p := range query.Params {
-				cols = append(cols, goColumn{
-					id:     int(p.Number),
-					Column: p.Column,
-				})
+				cols = append(
+					cols, goColumn{
+						id:     int(p.Number),
+						Column: p.Column,
+					},
+				)
 			}
 			s, err := columnsToStruct(req, options, gq.MethodName+"Params", cols, false)
 			if err != nil {
@@ -301,11 +310,13 @@ func buildQueries(req *plugin.GenerateRequest, options *opts.Options, structs []
 			if gs == nil {
 				var columns []goColumn
 				for i, c := range query.Columns {
-					columns = append(columns, goColumn{
-						id:     i,
-						Column: c,
-						embed:  newGoEmbed(c.EmbedTable, structs, req.Catalog.DefaultSchema),
-					})
+					columns = append(
+						columns, goColumn{
+							id:     i,
+							Column: c,
+							embed:  newGoEmbed(c.EmbedTable, structs, req.Catalog.DefaultSchema),
+						},
+					)
 				}
 				var err error
 				gs, err = columnsToStruct(req, options, gq.MethodName+"Row", columns, true)
@@ -349,7 +360,13 @@ func putOutColumns(query *plugin.Query) bool {
 // JSON tags: count, count_2, count_2
 //
 // This is unlikely to happen, so don't fix it yet
-func columnsToStruct(req *plugin.GenerateRequest, options *opts.Options, name string, columns []goColumn, useID bool) (*Struct, error) {
+func columnsToStruct(
+	req *plugin.GenerateRequest,
+	options *opts.Options,
+	name string,
+	columns []goColumn,
+	useID bool,
+) (*Struct, error) {
 	gs := Struct{
 		Name: name,
 	}

@@ -44,6 +44,10 @@ type Options struct {
 	OmitUnusedStructs           bool              `json:"omit_unused_structs,omitempty" yaml:"omit_unused_structs"`
 	BuildTags                   string            `json:"build_tags,omitempty" yaml:"build_tags"`
 	DefaultSchema               string            `json:"default_schema,omitempty" yaml:"default_schema"`
+	GenerateGql                 bool              `json:"generate_gql,omitempty" yaml:"generate_gql"`
+	GqlModelPackage             string            `json:"gql_model_package,omitempty" yaml:"gql_model_package"`
+	GqlOut                      string            `json:"gql_out,omitempty" yaml:"gql_out"`
+	GqlGenCommonParts           bool              `json:"gql_gen_common_parts,omitempty" yaml:"gql_gen_common_parts"`
 }
 
 type GlobalOptions struct {

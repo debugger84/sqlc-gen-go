@@ -132,7 +132,18 @@ func Generate(ctx context.Context, req *plugin.GenerateRequest) (*plugin.Generat
 		return nil, err
 	}
 
-	return generate(req, options, enums, structs, queries)
+	resp, err := generate(req, options, enums, structs, queries)
+	if err != nil {
+		return nil, err
+	}
+	if options.GenerateGql {
+		gqlResp, err := generateGql(req, options, enums, structs, queries)
+		if err != nil {
+			return nil, err
+		}
+		resp.Files = append(resp.Files, gqlResp.Files...)
+	}
+	return resp, nil
 }
 
 func validate(options *opts.Options, enums []Enum, structs []Struct, queries []Query) error {

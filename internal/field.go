@@ -6,14 +6,15 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
 	"github.com/sqlc-dev/plugin-sdk-go/plugin"
+	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
 )
 
 type Field struct {
 	Name    string // CamelCased name for Go
 	DBName  string // Name as used in the DB
 	Type    string
+	GqlType string
 	Tags    map[string]string
 	Comment string
 	Column  *plugin.Column
@@ -81,9 +82,11 @@ var camelPattern = regexp.MustCompile("[^A-Z][A-Z]+")
 
 func toSnakeCase(s string) string {
 	if !strings.ContainsRune(s, '_') {
-		s = camelPattern.ReplaceAllStringFunc(s, func(x string) string {
-			return x[:1] + "_" + x[1:]
-		})
+		s = camelPattern.ReplaceAllStringFunc(
+			s, func(x string) string {
+				return x[:1] + "_" + x[1:]
+			},
+		)
 	}
 	return strings.ToLower(s)
 }
