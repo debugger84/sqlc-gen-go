@@ -114,10 +114,10 @@ func (q *Queries) {{.MethodName}}(ctx context.Context, {{.Arg.Pair}}) ({{.Return
 			if i == len(items) - 1 {
 				connection.PageInfo.EndCursor = cursorValue
 			}
-			connection.Edges = append(connection.Edges, {{.Ret.DefineType}}Edge{
+			connection.Edges[i] = {{.Ret.DefineType}}Edge{
 				Node: item,
 				Cursor: cursorValue,
-			})
+			}
 		}
 		return connection, nil
 	{{- else }}
