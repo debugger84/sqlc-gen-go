@@ -557,13 +557,9 @@ func addPageStruct(original Struct, structs []Struct) []Struct {
 func addConnectionStruct(original Struct, structs []Struct, cursorFields []CursorField) []Struct {
 	connectionName := original.Name + "Connection"
 	edgeName := original.Name + "Edge"
-	hasPageInfo := false
 	for _, s := range structs {
 		if s.Name == connectionName {
 			return structs
-		}
-		if s.Name == "PageInfo" {
-			hasPageInfo = true
 		}
 	}
 
@@ -612,7 +608,7 @@ func addConnectionStruct(original Struct, structs []Struct, cursorFields []Curso
 			{
 				Name:   "PageInfo",
 				DBName: "",
-				Type:   "PageInfo",
+				Type:   "schema.PageInfo",
 				Column: &plugin.Column{
 					Name:    "pageInfo",
 					NotNull: true,
@@ -621,35 +617,6 @@ func addConnectionStruct(original Struct, structs []Struct, cursorFields []Curso
 				},
 			},
 		},
-	}
-
-	if !hasPageInfo {
-		pageInfoStruct := Struct{
-			Name: "PageInfo",
-			Fields: []Field{
-				{
-					Name:   "StartCursor",
-					DBName: "",
-					Type:   "string",
-				},
-				{
-					Name:   "EndCursor",
-					DBName: "",
-					Type:   "string",
-				},
-				{
-					Name:   "HasNextPage",
-					DBName: "",
-					Type:   "bool",
-				},
-				{
-					Name:   "HasPreviousPage",
-					DBName: "",
-					Type:   "bool",
-				},
-			},
-		}
-		structs = append(structs, pageInfoStruct)
 	}
 
 	cursorStruct := Struct{

@@ -93,7 +93,7 @@ func (q *Queries) {{.MethodName}}(ctx context.Context, {{.Arg.Pair}}) ({{.Return
 		if {{.Arg.Name}}.Cursor != "" {
 			hasPrevious = true
 		}
-		connection.PageInfo = PageInfo{
+		connection.PageInfo = schema.PageInfo{
 			HasNextPage: hasNext,
 			HasPreviousPage: hasPrevious,
 		}

@@ -187,6 +187,7 @@ func buildImports(options *opts.Options, queries []Query, uses func(string) bool
 			pkg[ImportSpec{Path: "encoding/base64"}] = struct{}{}
 			pkg[ImportSpec{Path: "encoding/json"}] = struct{}{}
 			pkg[ImportSpec{Path: "errors"}] = struct{}{}
+			pkg[ImportSpec{Path: "github.com/debugger84/sqlc-graphql/schema"}] = struct{}{}
 		}
 	}
 
