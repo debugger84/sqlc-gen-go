@@ -290,6 +290,12 @@ func (i *importer) modelImports() fileImports {
 		std["database/sql/driver"] = struct{}{}
 	}
 
+	for _, q := range i.Queries {
+		if q.CursorPagination {
+			pkg[ImportSpec{Path: "github.com/debugger84/sqlc-graphql/schema"}] = struct{}{}
+		}
+	}
+
 	return sortedImports(std, pkg)
 }
 
