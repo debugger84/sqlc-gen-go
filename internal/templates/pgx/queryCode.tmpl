@@ -83,12 +83,12 @@ func (q *Queries) {{.MethodName}}(ctx context.Context, {{.Arg.Pair}}) ({{.Return
 {{- if .Paginated}}
 	{{- if .CursorPagination }}
 		connection := {{.ReturnedType}}{}
-		connection.Edges = make([]{{.Ret.DefineType}}Edge, len(items))
 		hasNext := false
 		if len(items) > int({{.Arg.Name}}.Limit) {
 			hasNext = true
 			items = items[:len(items)-1]
 		}
+		connection.Edges = make([]{{.Ret.DefineType}}Edge, len(items))
 		hasPrevious := false
 		if {{.Arg.Name}}.Cursor != "" {
 			hasPrevious = true
