@@ -399,9 +399,13 @@ func (q Query) QueryParams() string {
 		pageParams := q.Arg.PagedParams()
 		if q.CursorPagination {
 			pageParamsLines := strings.Split(pageParams, ",")
-			pageParamsItems := make([]string, len(pageParamsLines))
-			for i, line := range pageParamsLines {
-				pageParamsItems[i] = strings.Trim(strings.TrimSpace(line), "\n")
+			pageParamsItems := make([]string, 0, len(pageParamsLines))
+			for _, line := range pageParamsLines {
+				param := strings.Trim(strings.TrimSpace(line), "\n")
+				if param != "" {
+					pageParamsItems = append(pageParamsItems, param)
+					continue
+				}
 			}
 			for _, field := range q.CursorFields {
 				pageParamsItems = append(pageParamsItems, "cursor."+field.Field.Name)
