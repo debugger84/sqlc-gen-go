@@ -820,6 +820,7 @@ func getCursorPaginationSql(query Query, cursorFields []CursorField) string {
 	}
 	cursorWhereClause := ""
 	orderClause := ""
+	openedBrackets := 0
 	for i, f := range cursorFields {
 		if i > 0 {
 			cursorWhereClause += " AND"
@@ -832,11 +833,13 @@ func getCursorPaginationSql(query Query, cursorFields []CursorField) string {
 			orderClause += " DESC"
 		}
 		cursorWhereClause += fmt.Sprintf(" (%s %s $%d", f.Field.Column.GetName(), sign, cursor+i+1)
+		openedBrackets++
 		if i < len(cursorFields)-1 {
 			cursorWhereClause += fmt.Sprintf(" OR (%s = $%d", f.Field.Column.GetName(), cursor+i+1)
+			openedBrackets++
 		}
 	}
-	for i := 0; i < len(cursorFields)+1; i++ {
+	for i := 0; i < openedBrackets; i++ {
 		cursorWhereClause += ")"
 	}
 	sql = fmt.Sprintf(
